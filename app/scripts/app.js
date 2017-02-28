@@ -36,23 +36,35 @@ Instructions:
     /*
     This code needs to get wrapped in a Promise!
      */
-    var req = new XMLHttpRequest();
-    req.open('GET', url);
-    req.onload = function() {
-      if (req.status === 200) {
-        // It worked!
-        // You'll want to resolve with the data from req.response
-      } else {
-        // It failed :(
-        // Be nice and reject with req.statusText
-      }
-    };
-    req.onerror = function() {
-      // It failed :(
-      // Pass a 'Network Error' to reject
-    };
-    req.send();
+     console.log('entered get 1')
+     var myPromise = new Promise(function(resolve,reject){
+
+        var req = new XMLHttpRequest();
+        req.open('GET', url);
+        req.onload = function() {
+           console.log('entered get 2');
+           if (req.status === 200) {
+             // It worked!
+             // You'll want to resolve with the data from req.response
+             console.log('entered get 3', req.response);
+             resolve(req.response)
+           } else {
+             // It failed :(
+             // Be nice and reject with req.statusText
+             console.log('entered get 4');
+             reject(req.statusText)
+           }
+        };
+        req.onerror = function() {
+           // It failed :(
+           // Pass a 'Network Error' to reject
+           reject(error)
+        };
+      req.send();
+    })
+    return myPromise
   }
+
 
   window.addEventListener('WebComponentsReady', function() {
     home = document.querySelector('section[data-route="home"]');
@@ -61,6 +73,14 @@ Instructions:
     You'll need to add a .then and a .catch. Pass the response to addSearchHeader on resolve or
     pass 'unknown' to addSearchHeader if it rejects.
      */
-    // get('../data/earth-like-results.json')
+    get('../data/earth-like-results.json')
+      .then(function(response){
+        console.log('response::', response);
+        addSearchHeader(response)
+      })
+      .catch(function(error){
+        console.log('error message', error)
+      })
+
   });
 })(document);
